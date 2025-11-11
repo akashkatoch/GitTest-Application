@@ -8,9 +8,9 @@ on:
 env:
   IMAGE_NAME: dockerhub-repo
   REGISTRY: docker.io
-  DOCKERHUB_NAMESPACE: ${{ secrets.DOCKER_USERNAME }}
+  DOCKERHUB_NAMESPACE: ${{ secrets.DOCKERHUB_USERNAME }}
   IMAGE: docker.io/${{ secrets.DOCKER_USERNAME }}/dockerhub-repo
-  DEPLOY_REPO: akashkatoch/GitTest-Application
+  DEPLOY_REPO: akashkatoch/GitTest-Infra
   DEPLOY_BRANCH: main
   APP_PATH: app
 
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      id-token: write   # for keyless signing (cosign OIDC)
+      id-token: write  
       packages: write
       pull-requests: write
       security-events: write 
@@ -133,7 +133,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ env.DEPLOY_REPO }}
-          token: ${{ secrets.DEPLOY_REPO_TOKEN }}
+          token: ${{ secrets.GIT2GIT_TOKEN }}
           ref: ${{ env.DEPLOY_BRANCH }}
           path: deploy-repo
           fetch-depth: 0
@@ -193,7 +193,7 @@ jobs:
         if: steps.commitcheck.outputs.skip_pr != 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.DEPLOY_REPO_TOKEN }}
+          token: ${{ secrets.GIT2GIT_TOKEN }}
           path: deploy-repo
           # Unique branch every run to avoid reusing an old one
           branch: update-image-${{ steps.meta.outputs.short_sha }}-${{ github.run_number }}
